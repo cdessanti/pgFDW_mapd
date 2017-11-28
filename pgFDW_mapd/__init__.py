@@ -1,10 +1,10 @@
 from __future__ import absolute_import
-from pymapd import connect
+from threading import Timer
 from multicorn import ForeignDataWrapper
 from multicorn.utils import log_to_postgres, ERROR, WARNING, DEBUG, INFO
-from threading import Timer
 import datetime
 import pymapd
+from pymapd import connect
 
 connection_attrs = {
     'user': 'mapd',
@@ -42,10 +42,6 @@ class pgFDW_mapd(ForeignDataWrapper):
                 setattr(self, attribute, options.get(attribute))
         self.connection = connect(user=self.user, password=self.password,
                                   host=self.host, port=self.port, dbname=self.dbname)
-        self.idle_timeout = options.get('idle_timeout', 300)
-        self.idle_timeout_timer = Timer(
-            self.idle_timeout, self.close_connection)
-        self.idle_timeout_timer.start()
         self.limit = options.get('limit', 100000)
         self.query = options.get('query', None)
         if self.query != None:
@@ -68,15 +64,18 @@ class pgFDW_mapd(ForeignDataWrapper):
         return ret_value
 
     def execute(self, quals, columns):
-        log_to_postgres(
-            "timer ." + str(self.idle_timeout_timer.is_alive), INFO)
         if self.connection is None or self.connection.closed == 1:
             self.connection = connect(
-                user=self.user, password=self.password, host=self.host, port=self.port, dbname=self.dbname)
-        self.idle_timeout_timer.cancel()
-        self.idle_timeout_timer = Timer(
-            self.idle_timeout, self.close_connection)
-        self.idle_timeout_timer.start()
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port,
+                dbname=self.dbname)
+        #self.idle_timeout_timer.cancel()
+        #self.idle_timeout_timer = Timer(
+        #    self.idle_timeout, self.close_connection)
+        #self.idle_timeout_timer.start()
+        #self.idle_timeout_timer.interval = self.idle_timeout
         statement = u""
         statement = "SELECT {0} from {1}".format(
             ",".join(columns), self.table_name)
@@ -102,8 +101,8 @@ class pgFDW_mapd(ForeignDataWrapper):
             elif translated_qo == 'in':
                 statement = statement + " ( {0} )".format(",".join(
                     [self.return_formatted_value(in_value) for in_value in qualifier.value]))
-            if self.limit != -1:
-                statement = statement + " limit" + str(self.limit)
+        if self.limit != -1:
+            statement = statement + " limit " + str(self.limit)
         resultSet = self.connection.execute(statement)
 
         for row in resultSet:
