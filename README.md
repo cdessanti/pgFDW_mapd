@@ -39,7 +39,6 @@ CREATE EXTENSION multicorn
 ```
 
 ### create server to access Mapd database
-### create multicorn extension
 ```sql
 CREATE SERVER fdw_mapd FOREIGN DATA WRAPPER multicorn
 OPTIONS (
@@ -122,4 +121,3 @@ so you will get the aggregated and filtered data
 
 You can get a similar result while defining a view on target database, but i think this implementation is more flexible because you can create , modify and drop those views on client side
 
- 
