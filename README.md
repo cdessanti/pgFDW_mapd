@@ -93,8 +93,8 @@ CREATE FOREIGN TABLE ft_flights_avgs
     flight_year         SMALLINT,
     flight_month        SMALLINT,
     origin              TEXT,
-    avg_depdelay        FLOAT,
-    avg_arrdelay        FLOAT
+    avg_depdelay        REAL,
+    avg_arrdelay        REAL
 ) SERVER fdw_mapd 
 OPTIONS
 (   table_name 'flights_2008_10k',
