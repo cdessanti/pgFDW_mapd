@@ -68,7 +68,7 @@ OPTIONS
 (
     table_name 'flights_2008_10k',  -- name of the table on remote database required
     query 'select ...' -- optional if specified the query specified will be used as an inline view
-    limit number_of_rows -- optional this parameter will limit the number of rows returned by FT will default is 100000
+    limit 'number_of_rows' -- optional this parameter will limit the number of rows returned by FT will default is 100000
 )
 ```
 
@@ -77,7 +77,7 @@ OPTIONS
 SELECT * 
 FROM ft_flights_2008_10k 
 WHERE origin= 'AMA' 
-AND flight_dayofweek=6  
+AND flight_dayofmonth=6  
 ```
 
 ### limitations
@@ -104,7 +104,7 @@ OPTIONS
 
 the following query
 ```sql
-SELECT * FROM ft_flights_avgs where origin = 'SAT' and year = 2008
+SELECT * FROM ft_flights_avgs where origin = 'SAT' and flight_year = 2008
 ```
 will be rewriteen and sent to Mapd this way
 
