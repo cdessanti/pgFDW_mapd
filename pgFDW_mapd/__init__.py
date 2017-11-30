@@ -86,7 +86,6 @@ class pgFDW_mapd(ForeignDataWrapper):
             if translated_qo == 'not ilike':
                 log_to_postgres('The operator ' + translated_qo +
                                 ' is not supported on MAPD', ERROR)
-                self.connection.close()
                 return
             if isWhereDefined is False:
                 statement = statement + " WHERE " + qualifier.field_name + \
