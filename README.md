@@ -42,7 +42,7 @@ CREATE EXTENSION multicorn
 ```sql
 CREATE SERVER fdw_mapd FOREIGN DATA WRAPPER multicorn
 OPTIONS (
-    wrapper 'pgFDW_MAPD.pgFDW_MAPD',
+    wrapper 'pgFDW_mapd.pgFDW_mapd',
     host 'the_ip_or_name_of_host_hosing_mapd',  -- optional it will default to localhost (127.0.0.1)
     port 'the_port_where_mapd_is_listening',    -- tipically 9091 it will default to 9091
     user 'username',                            -- optional it will default to 'mapd'
